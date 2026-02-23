@@ -130,14 +130,18 @@ if mode == "📊 경영진 대시보드":
         with col1:
             st.subheader("리스크-수익 포트폴리오")
             
+            # 버블 크기용 컬럼 생성 (음수/0 방지)
+            plot_df = risk_df.copy()
+            plot_df['bubble_size'] = plot_df['baseline_mean_sales'].clip(lower=1)
+            
             # Plotly 산점도
             fig = px.scatter(
-                risk_df,
+                plot_df,
                 x='std_ROI',
                 y='mean_ROI',
-                size='baseline_mean_sales',
+                size='bubble_size',
                 color='sensitivity_group',
-                hover_data=['Dept', 'RAROI'],
+                hover_data=['Dept', 'RAROI', 'baseline_mean_sales'],
                 title="부서별 리스크-수익 매트릭스",
                 labels={'std_ROI': 'ROI 변동성', 'mean_ROI': '평균 ROI'},
                 height=500
